@@ -1,0 +1,40 @@
+{
+  "Comment": "Step function 4 - Nested Step Functions",
+  "StartAt": "stepFunction1",
+  "States": {
+    "stepFunction1": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::states:startExecution.sync",
+      "Parameters": {
+        "Input": {
+          "foo.$": "$$.Execution.Input.stpFn1.foo"
+        },
+        "StateMachineArn": "${stpFn1Arn}"
+      },
+      "Next": "stepFunction2"
+    },
+    "stepFunction2": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::states:startExecution.sync",
+      "Parameters": {
+        "Input": {
+          "foo.$": "$$.Execution.Input.stpFn2.foo"
+        },
+        "StateMachineArn": "${stpFn2Arn}"
+      },
+      "Next": "stepFunction3"
+    },
+    "stepFunction3": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::states:startExecution.sync",
+      "Parameters": {
+        "Input": {
+          "p1.$": "$$.Execution.Input.stpFn3.p1",
+          "p2.$": "$$.Execution.Input.stpFn3.p2"
+        },
+        "StateMachineArn": "${stpFn3Arn}"
+      },
+      "End": true
+    }
+  }
+}

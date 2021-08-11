@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: step-function-webinar
+
+
+Resources:
+  stepFunction2Lambda1:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: stepFunction2Lambda1
+      CodeUri: lambdas/stepFunction2Lambda1/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+  stepFunction2Lambda2:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: stepFunction2Lambda2
+      CodeUri: lambdas/stepFunction2Lambda2/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+  stepFunction2Lambda3:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: stepFunction2Lambda3
+      CodeUri: lambdas/stepFunction2Lambda2/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+  stepFunction2Lambda4:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: stepFunction2Lambda4
+      CodeUri: lambdas/stepFunction2Lambda2/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+  
+  stepFunction2:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: stepfunctions/stepFunction2.asl.json
+      DefinitionSubstitutions:
+        lambda1Arn: !GetAtt stepFunction2Lambda1.Arn
+        lambda2Arn: !GetAtt stepFunction2Lambda2.Arn
+        lambda3Arn: !GetAtt stepFunction2Lambda3.Arn
+        lambda4Arn: !GetAtt stepFunction2Lambda4.Arn
+      Name: stepFunction2
+      Policies:
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: 
+                - !GetAtt stepFunction2Lambda1.Arn
+                - !GetAtt stepFunction2Lambda2.Arn
+                - !GetAtt stepFunction2Lambda3.Arn
+                - !GetAtt stepFunction2Lambda4.Arn
+
+
+
+

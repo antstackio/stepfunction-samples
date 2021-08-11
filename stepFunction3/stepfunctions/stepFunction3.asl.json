@@ -1,0 +1,56 @@
+{
+  "Comment": "Step function 3 - Parallel and Map",
+  "StartAt": "Parallel State",
+  "States": {
+    "Parallel State": {
+      "Type": "Parallel",
+      "Next":"FormOutput",
+      "Branches": [
+        {
+          "StartAt": "Simple Task",
+          "States": {
+            "Simple Task": {
+              "InputPath": "$.p1",
+              "Type": "Task",
+              "Resource": "${lambda1Arn}",
+              "Next": "Wait Task"
+            },
+            "Wait Task":{
+              "Type":"Wait",
+              "Seconds":5,
+              "End":true
+            }
+          }
+        },
+        {
+          "StartAt": "Map",
+          "States": {
+            "Map": {
+              "Type": "Map",
+              "InputPath": "$.p2",
+              "End": true,
+              "Iterator": {
+                "StartAt": "Map Task",
+                "States": {
+                  "Map Task": {
+                    "Type": "Task",
+                    "Resource": "${lambda2Arn}",
+                    "End": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FormOutput":{
+      "Type":"Pass",
+      "Parameters":{
+        "P1Output.$":"$[0]",
+        "P2Output.$":"$[1]"
+      },
+      "End":true
+    }
+  }
+}

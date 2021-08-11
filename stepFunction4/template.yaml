@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: step-function-webinar
+
+
+Resources:
+   stepfunction3:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: stepfunctions/stepfunction4.asl.json
+      DefinitionSubstitutions:
+        stpFn1Arn: !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:stepFunction1'
+        stpFn2Arn: !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:stepFunction2'
+        stpFn3Arn: !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:stepFunction3'
+      Name: stepFunction4
+      Policies:
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - states:StartExecution
+              Resource: 
+                - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:stepFunction1'
+                - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:stepFunction2'
+                - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:stepFunction3'
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - states:DescribeExecution
+                - states:StopExecution
+              Resource: '*'
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - events:PutTargets
+                - events:PutRule
+                - events:DescribeRule
+              Resource: 
+                - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/*'

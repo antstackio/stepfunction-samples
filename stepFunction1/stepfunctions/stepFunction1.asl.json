@@ -1,0 +1,43 @@
+{
+    "Comment": "Step Function 1 - choices",
+    "StartAt": "Pass",
+    "States": {
+      "Pass": {
+        "Type": "Pass",
+        "InputPath": "$.foo",
+        "Next": "Choice"
+      },
+      "Choice": {
+        "Type": "Choice",
+        "Default": "lambda 1",
+        "Choices": [
+          {
+            "Variable": "$",
+            "NumericEquals": 1,
+            "Next": "lambda 1"
+          },
+          {
+            "Variable": "$",
+            "NumericEquals": 2,
+            "Next": "lambda 2"
+          }
+        ]
+      },
+      "lambda 1": {
+        "Type": "Task",
+        "Resource":"${lambda1Arn}",
+        "Next": "Succeeded"
+      },
+      "lambda 2": {
+        "Type": "Task",
+        "Resource": "${lambda2Arn}",
+        "Next": "Failed"
+      },
+      "Succeeded": {
+        "Type": "Succeed"
+      },
+      "Failed": {
+        "Type": "Fail"
+      }
+    }
+  }

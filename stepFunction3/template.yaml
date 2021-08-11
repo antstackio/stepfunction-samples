@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: step-function-webinar
+
+
+Resources:
+  stepfunction3Lambda1:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: stepfunction3Lambda1
+      CodeUri: lambdas/stepfunction3Lambda1/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+  stepfunction3Lambda2:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: stepfunction3Lambda2
+      CodeUri: lambdas/stepfunction3Lambda2/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+  
+  stepfunction3:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: stepFunctions/stepfunction3.asl.json
+      DefinitionSubstitutions:
+        lambda1Arn: !GetAtt stepfunction3Lambda1.Arn
+        lambda2Arn: !GetAtt stepfunction3Lambda2.Arn
+      Name: stepFunction3
+      Policies:
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: 
+                - !GetAtt stepfunction3Lambda1.Arn
+                - !GetAtt stepfunction3Lambda2.Arn
+
+
+
